@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
 const fs = require("fs");
-const articles = require("../articles.json");
+const { body, validationResult } = require("express-validator");
+const slugify = require("slugify");
+const { articleExists } = require("../middlewares/article");
 
 app.get("/", (req, res) => {
   fs.readFile("./articles.json", (err, data) => {
@@ -19,8 +21,24 @@ app.get("/", (req, res) => {
     }
   });
 });
-
 //
+
+app.get("/:slug", (req, res) => {
+  fs.readFile("./articles.json", articleExists, (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      const rawData = data;
+      console.log(rawData);
+      const stringifiedData = rawData.toString();
+      console.log(stringifiedData);
+      const realData = JSON.parse(stringifiedData);
+      console.log(realData);
+
+      res.json(realData);
+    }
+  });
+});
 
 app.post("/", (req, res) => {
   const article = { ...req.body };
