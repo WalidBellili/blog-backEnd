@@ -23,10 +23,11 @@ app.get("/", (req, res) => {
 });
 //
 
-app.get("/:slug", (req, res) => {
-  fs.readFile("./articles.json", articleExists, (err, data) => {
+app.get("/categories/:slug", (req, res) => {
+  fs.readFile("./articles.json", (err, data) => {
     if (err) {
-      console.log(err);
+      res.json(err);
+      return;
     } else {
       const rawData = data;
       console.log(rawData);
@@ -34,8 +35,6 @@ app.get("/:slug", (req, res) => {
       console.log(stringifiedData);
       const realData = JSON.parse(stringifiedData);
       console.log(realData);
-
-      res.json(realData);
     }
   });
 });
