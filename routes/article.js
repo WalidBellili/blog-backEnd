@@ -4,6 +4,7 @@ const fs = require("fs");
 const { body, validationResult } = require("express-validator");
 const slugify = require("slugify");
 const { articleExists } = require("../middlewares/article");
+const moment = require("moment");
 
 app.get("/", (req, res) => {
   fs.readFile("./articles.json", (err, data) => {
@@ -40,11 +41,22 @@ app.get("/categories/:slug", (req, res) => {
 });
 
 app.post(
-  "/",
+  "/categories/:slug",
   body("name").isLength({ min: 3 }).withMessage("name To short"),
   body("description").isLength({ min: 5 }).withMessage("description to short"),
   (req, res) => {
-    const article = { ...req.body };
+    // const article = { ...req.body };
+
+    const article = {
+      name: req.body.name,
+      author: req.body.description,
+      title: req.body.title,
+      date: moment().format(),
+      slug: slugify(req.body.name, {
+        lower: true,
+      }),
+      category: req.params.slug,
+    };
 
     fs.readFile("./articles.json", (err, data) => {
       if (err) {
